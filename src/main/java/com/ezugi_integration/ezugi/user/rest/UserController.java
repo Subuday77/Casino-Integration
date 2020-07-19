@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ezugi_integration.ezugi.beans.Storage;
 import com.ezugi_integration.ezugi.beans.User;
+import com.ezugi_integration.ezugi.storage.DAO.StorageDAO;
 import com.ezugi_integration.ezugi.user.DAO.UserDAO;
+import static com.ezugi_integration.ezugi.beans.Constants.DATA_TYPES;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -28,6 +31,10 @@ public class UserController {
 	User user;
 	@Autowired
 	UserDAO userDAO;
+	@Autowired
+	Storage storage;
+	@Autowired
+	StorageDAO storageDAO;
 
 	@PostMapping("/adduser")
 	public ResponseEntity<?> addUser(@RequestBody User user) {
@@ -71,6 +78,24 @@ public class UserController {
 			}
 		}
 		return new ResponseEntity<String>("Invalid email or password", HttpStatus.FORBIDDEN);
+	}
+	
+	@PutMapping("/logout")
+	public ResponseEntity<?> logOut (@RequestParam (name="uid") long uid) {
+		Optional<User> existingUser = userDAO.findUserById(uid);
+		if (existingUser.isPresent()) {
+			storage = new Storage();
+			storage.setData(userDAO.findUserById(uid).get().getSessionToken());
+			storage.setDataType(DATA_TYPES.token);
+			storage.setUid(String.valueOf(uid));
+			storage.setTimestamp(System.currentTimeMillis());
+			storageDAO.addStorageRecord(storage);
+			userDAO.findUserById(uid).get().setSessionToken(null);
+			userDAO.findUserById(uid).get().setSessionTokenTimestamp(0);
+			userDAO.addUser(userDAO.findUserById(uid).get());
+			return new ResponseEntity<String>("Logged off", HttpStatus.OK);
+		}
+		return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
 	}
 
 	@PutMapping("/token")
