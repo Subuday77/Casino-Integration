@@ -1,0 +1,108 @@
+package com.ezugi_integration.ezugi.user.rest;
+
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ezugi_integration.ezugi.beans.User;
+import com.ezugi_integration.ezugi.user.DAO.UserDAO;
+
+@RestController
+@CrossOrigin(origins = "*")
+@RequestMapping("/usercontrol")
+public class UserController {
+	@Autowired
+	User user;
+	@Autowired
+	UserDAO userDAO;
+
+	@PostMapping("/adduser")
+	public ResponseEntity<?> addUser(@RequestBody User user) {
+		Optional<User> existingUser = userDAO.findUserByUserName(user.getUserName());
+		if (existingUser.isEmpty()) {
+
+			user.setBalance(1000);
+			user.setCurrency("USD");
+			user.setLanguage("en");
+			user.setVip("0");
+			user.setBonusAmount(0);
+			userDAO.addUser(user);
+			return new ResponseEntity<String>("User with UID " + user.getUid() + " was added", HttpStatus.OK);
+		}
+		return new ResponseEntity<String>("User name alredy in use", HttpStatus.IM_USED);
+	}
+
+	@DeleteMapping("/deleteuser")
+	public ResponseEntity<?> deleteUser(@RequestBody User user) {
+		Optional<User> existingUser = userDAO.findUserById(user.getUid());
+		if (existingUser.isPresent()) {
+			userDAO.deleteUser(user);
+			return new ResponseEntity<String>("User " + user.getUid() + " was deleted.", HttpStatus.OK);
+		}
+		return new ResponseEntity<String>("User " + user.getUid() + " was not found.", HttpStatus.NOT_FOUND);
+	}
+
+	@GetMapping("/getallusers")
+	public ResponseEntity<?> getAllUsers() {
+		return new ResponseEntity<ArrayList<User>>((ArrayList<User>) userDAO.getAllUsers(), HttpStatus.OK);
+	}
+
+	@GetMapping("/login")
+	public ResponseEntity<?> login(@RequestParam(name = "user") String userName,
+			@RequestParam(name = "password") String password) {
+		Optional<User> existingUser = userDAO.findUserByUserName(userName);
+		if (existingUser.isPresent()) {
+			String passwordToCheck = existingUser.get().getPassword();
+			if (passwordToCheck.equals(password)) {
+				return new ResponseEntity<User>(existingUser.get(), HttpStatus.OK);
+			}
+		}
+		return new ResponseEntity<String>("Invalid email or password", HttpStatus.FORBIDDEN);
+	}
+
+	@PutMapping("/token")
+	public ResponseEntity<?> generateInitialToken(@RequestParam(name = "uid") long uid) {
+		Optional<User> existingUser = userDAO.findUserById(uid);
+		if (existingUser.isPresent()) {
+			userDAO.findUserById(uid).get().setInitialToken(String.valueOf(UUID.randomUUID()));
+			userDAO.findUserById(uid).get().setInitialTokenTimestamp(System.currentTimeMillis());
+			userDAO.addUser(userDAO.findUserById(uid).get());
+			return new ResponseEntity<String>(userDAO.findUserById(uid).get().getInitialToken(), HttpStatus.OK);
+		}
+		return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
+	}
+
+	@PutMapping("/balance")
+	public ResponseEntity<?> changeBalance(@RequestParam(name = "uid") long uid,
+			@RequestParam(name = "amount") double amount) {
+		Optional<User> existingUser = userDAO.findUserById(uid);
+
+		if (existingUser.isPresent()) {
+
+			double balance = userDAO.findUserById(uid).get().getBalance();
+			userDAO.findUserById(uid).get().setBalance(userDAO.findUserById(uid).get().getBalance() + amount);
+			userDAO.addUser(userDAO.findUserById(uid).get());
+			if (userDAO.findUserById(uid).get().getBalance() < 0) {
+				userDAO.findUserById(uid).get().setBalance(balance);
+				userDAO.addUser(userDAO.findUserById(uid).get());
+				return new ResponseEntity<String>("Invalid amount. Balance can't be lower than 0",
+						HttpStatus.NOT_ACCEPTABLE);
+			}
+			return new ResponseEntity<String>("Balance changed", HttpStatus.OK);
+		}
+		return new ResponseEntity<String>("User " + uid + " was not found.", HttpStatus.NOT_FOUND);
+	}
+}
