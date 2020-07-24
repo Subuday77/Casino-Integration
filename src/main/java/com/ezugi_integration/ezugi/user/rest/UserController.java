@@ -107,6 +107,7 @@ public class UserController {
 			userDAO.findUserById(uid).get().setInitialToken(String.valueOf(UUID.randomUUID()));
 			userDAO.findUserById(uid).get().setInitialTokenTimestamp(System.currentTimeMillis());
 			userDAO.addUser(userDAO.findUserById(uid).get());
+			userDAO.findUserById(uid).get().setPassword("secured");
 			return new ResponseEntity<User>(userDAO.findUserById(uid).get(), HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
