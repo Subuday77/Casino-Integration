@@ -75,6 +75,7 @@ public class UserController {
 		if (existingUser.isPresent()) {
 			String passwordToCheck = existingUser.get().getPassword();
 			if (passwordToCheck.equals(password)) {
+				existingUser.get().setPassword("secured");
 				return new ResponseEntity<User>(existingUser.get(), HttpStatus.OK);
 			}
 		}
