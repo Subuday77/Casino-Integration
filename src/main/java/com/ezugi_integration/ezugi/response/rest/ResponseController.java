@@ -1,5 +1,6 @@
 package com.ezugi_integration.ezugi.response.rest;
 
+import java.text.DecimalFormat;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -48,6 +49,8 @@ public class ResponseController {
 	Storage storage;
 	@Autowired
 	StorageDAO storageDAO;
+	
+	public double balanceToRecord=0;
 
 	@PostMapping("/auth")
 	public ResponseEntity<?> authResponse(@RequestBody String request) {
@@ -217,8 +220,9 @@ public class ResponseController {
 			}
 			response.setErrorCode(0);
 			response.setErrorDescription("OK");
-			response.setBalance(user.get().getBalance() - requestJson.getDouble("debitAmount"));
-			userDAO.findUserById(requestJson.getLong("uid")).get().setBalance(response.getBalance());
+			balanceToRecord = Double.parseDouble(formatMyDouble(user.get().getBalance() - requestJson.getDouble("debitAmount")));
+			response.setBalance(balanceToRecord);
+			userDAO.findUserById(requestJson.getLong("uid")).get().setBalance(balanceToRecord);
 			userDAO.findUserById(requestJson.getLong("uid")).get().setSessionTokenTimestamp(System.currentTimeMillis());
 			userDAO.addUser(userDAO.findUserById(requestJson.getLong("uid")).get());
 			storage.setData(requestJson.getString("transactionId"));
@@ -257,8 +261,9 @@ public class ResponseController {
 					}
 					response.setErrorCode(0);
 					response.setErrorDescription("OK");
-					response.setBalance(user.get().getBalance() + requestJson.getDouble("rollbackAmount"));
-					userDAO.findUserById(requestJson.getLong("uid")).get().setBalance(response.getBalance());
+					balanceToRecord = Double.parseDouble(formatMyDouble(user.get().getBalance() + requestJson.getDouble("rollbackAmount")));
+					response.setBalance(balanceToRecord);
+					userDAO.findUserById(requestJson.getLong("uid")).get().setBalance(balanceToRecord);
 					userDAO.findUserById(requestJson.getLong("uid")).get()
 							.setSessionTokenTimestamp(System.currentTimeMillis());
 					userDAO.addUser(userDAO.findUserById(requestJson.getLong("uid")).get());
@@ -326,8 +331,9 @@ public class ResponseController {
 			}
 			response.setErrorCode(0);
 			response.setErrorDescription("OK");
-			response.setBalance(user.get().getBalance() + requestJson.getDouble("creditAmount"));
-			userDAO.findUserById(requestJson.getLong("uid")).get().setBalance(response.getBalance());
+			balanceToRecord = Double.parseDouble(formatMyDouble(user.get().getBalance() + requestJson.getDouble("creditAmount")));
+			response.setBalance(balanceToRecord);
+			userDAO.findUserById(requestJson.getLong("uid")).get().setBalance(balanceToRecord);
 			userDAO.findUserById(requestJson.getLong("uid")).get().setSessionTokenTimestamp(System.currentTimeMillis());
 			userDAO.addUser(userDAO.findUserById(requestJson.getLong("uid")).get());
 			storage.setData(requestJson.getString("transactionId"));
@@ -343,6 +349,11 @@ public class ResponseController {
 
 		return null;
 
+	}
+
+	public static String formatMyDouble(double num) {
+		DecimalFormat decimalFormat = new DecimalFormat("#.00");
+		return decimalFormat.format(num);
 	}
 
 }
