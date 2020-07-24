@@ -148,6 +148,7 @@ public class UserController {
 		if (existingUser.isEmpty()) {
 			userDAO.findUserById(uid).get().setUserName(userName);
 			userDAO.addUser(userDAO.findUserById(uid).get());
+			userDAO.findUserById(uid).get().setPassword("secured");
 			return new ResponseEntity<User>(userDAO.findUserById(uid).get(), HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("This username already in use. Please, choose another.", HttpStatus.IM_USED);
