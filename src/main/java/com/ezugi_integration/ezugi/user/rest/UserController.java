@@ -25,6 +25,7 @@ import static com.ezugi_integration.ezugi.beans.Constants.DATA_TYPES;
 
 @RestController
 @CrossOrigin(origins = "*")
+
 @RequestMapping("/usercontrol")
 public class UserController {
 	@Autowired
@@ -77,11 +78,11 @@ public class UserController {
 				return new ResponseEntity<User>(existingUser.get(), HttpStatus.OK);
 			}
 		}
-		return new ResponseEntity<String>("Invalid email or password", HttpStatus.FORBIDDEN);
+		return new ResponseEntity<String>("Invalid username or password", HttpStatus.FORBIDDEN);
 	}
-	
+
 	@PutMapping("/logout")
-	public ResponseEntity<?> logOut (@RequestParam (name="uid") long uid) {
+	public ResponseEntity<?> logOut(@RequestParam(name = "uid") long uid) {
 		Optional<User> existingUser = userDAO.findUserById(uid);
 		if (existingUser.isPresent()) {
 			storage = new Storage();
@@ -98,19 +99,19 @@ public class UserController {
 		return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
 	}
 
-	@PutMapping("/token")
+	@GetMapping("/token")
 	public ResponseEntity<?> generateInitialToken(@RequestParam(name = "uid") long uid) {
 		Optional<User> existingUser = userDAO.findUserById(uid);
 		if (existingUser.isPresent()) {
 			userDAO.findUserById(uid).get().setInitialToken(String.valueOf(UUID.randomUUID()));
 			userDAO.findUserById(uid).get().setInitialTokenTimestamp(System.currentTimeMillis());
 			userDAO.addUser(userDAO.findUserById(uid).get());
-			return new ResponseEntity<String>(userDAO.findUserById(uid).get().getInitialToken(), HttpStatus.OK);
+			return new ResponseEntity<User>(userDAO.findUserById(uid).get(), HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
 	}
 
-	@PutMapping("/balance")
+	@GetMapping("/balance")
 	public ResponseEntity<?> changeBalance(@RequestParam(name = "uid") long uid,
 			@RequestParam(name = "amount") double amount) {
 		Optional<User> existingUser = userDAO.findUserById(uid);
@@ -126,8 +127,28 @@ public class UserController {
 				return new ResponseEntity<String>("Invalid amount. Balance can't be lower than 0",
 						HttpStatus.NOT_ACCEPTABLE);
 			}
-			return new ResponseEntity<String>("Balance changed", HttpStatus.OK);
+			if (userDAO.findUserById(uid).get().getBalance() > 1000000) {
+				userDAO.findUserById(uid).get().setBalance(balance);
+				userDAO.addUser(userDAO.findUserById(uid).get());
+				return new ResponseEntity<String>("Don't be so greedy.\nBetter come later and get some more.",
+						HttpStatus.NOT_ACCEPTABLE);
+			}
+			return new ResponseEntity<Double>(userDAO.findUserById(uid).get().getBalance(), HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("User " + uid + " was not found.", HttpStatus.NOT_FOUND);
 	}
+
+	@GetMapping("/changeuname")
+
+	public ResponseEntity<?> changeUName(@RequestParam(name = "uid") long uid,
+			@RequestParam(name = "username") String userName) {
+		Optional<User> existingUser = userDAO.findUserByUserName(userName);
+		if (existingUser.isEmpty()) {
+			userDAO.findUserById(uid).get().setUserName(userName);
+			userDAO.addUser(userDAO.findUserById(uid).get());
+			return new ResponseEntity<User>(userDAO.findUserById(uid).get(), HttpStatus.OK);
+		}
+		return new ResponseEntity<String>("This username already in use. Please, choose another.", HttpStatus.IM_USED);
+	}
+
 }

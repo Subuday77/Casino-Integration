@@ -10,7 +10,7 @@ import com.ezugi_integration.ezugi.beans.User;
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
 
-	Optional<User> findByUserName(String userName);
+	Optional<User> findByUserNameIgnoreCase(String userName);
 
 	Optional<User> findByInitialToken(String initialToken);
 	

@@ -33,7 +33,7 @@ public class UserDAO {
 	}
 	
 	public Optional<User> findUserByUserName (String userName){
-		return userRepo.findByUserName(userName);
+		return userRepo.findByUserNameIgnoreCase(userName);
 	}
 	
 	public Optional<User> findUserByInitialToken (String initialToken){
