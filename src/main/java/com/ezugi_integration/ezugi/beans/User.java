@@ -39,7 +39,7 @@ public class User {
 
 	public User(String firstName, String lastName, String userName, String password, long uid, String initialToken,
 			long initialTokenTimestamp, String sessionToken, long sessionTokenTimestamp, 
-			double balance, String currency, String language, String vip, double bonusAmount) {
+			double balance, String currency, String language, String VIP, double bonusAmount) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.userName = userName;
@@ -53,7 +53,7 @@ public class User {
 		this.balance = balance;
 		this.currency = currency;
 		this.language = language;
-		this.VIP = vip;
+		this.VIP = VIP;
 		this.bonusAmount = bonusAmount;
 		// this.bjAllowed = bjAllowed;
 	}
@@ -178,12 +178,12 @@ public class User {
 	}
 
 	@Column
-	public String getVip() {
+	public String getVIP() {
 		return VIP;
 	}
 
-	public void setVip(String vip) {
-		this.VIP = vip;
+	public void setVip(String VIP) {
+		this.VIP = VIP;
 	}
 
 	@Column
