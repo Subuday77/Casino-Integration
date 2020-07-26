@@ -182,7 +182,7 @@ public class User {
 		return VIP;
 	}
 
-	public void setVip(String VIP) {
+	public void setVIP(String VIP) {
 		this.VIP = VIP;
 	}
 
