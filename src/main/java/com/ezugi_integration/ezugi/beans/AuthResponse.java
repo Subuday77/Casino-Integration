@@ -18,7 +18,7 @@ public class AuthResponse {
 	private String playerTokenAtLaunch;
 	private double balance;
 	private String currency;
-	private String vip;
+	private String VIP;
 	private int errorCode=-99;
 	private String errorDescription;
 	private long timestamp;
@@ -28,7 +28,7 @@ public class AuthResponse {
 	}
 
 	public AuthResponse(long operatorId, String uid, String nickName, String token, String playerTokenAtLaunch,
-			double balance, String currency, String vip, int errorCode, String errorDescription, long timestamp) {
+			double balance, String currency, String VIP, int errorCode, String errorDescription, long timestamp) {
 		this.operatorId = operatorId;
 		this.uid = uid;
 		this.nickName = nickName;
@@ -36,7 +36,7 @@ public class AuthResponse {
 		this.playerTokenAtLaunch = playerTokenAtLaunch;
 		this.balance = balance;
 		this.currency = currency;
-		this.vip = vip;
+		this.VIP = VIP;
 		this.errorCode = errorCode;
 		this.errorDescription = errorDescription;
 		this.timestamp = timestamp;
@@ -98,12 +98,12 @@ public class AuthResponse {
 		this.currency = currency;
 	}
 
-	public String getVip() {
-		return vip;
+	public String getVIP() {
+		return VIP;
 	}
 
-	public void setVip(String vip) {
-		this.vip = vip;
+	public void setVIP(String VIP) {
+		this.VIP = VIP;
 	}
 
 	public int getErrorCode() {
