@@ -61,7 +61,7 @@ public class ResponseController {
 	ObjectWriter ow1 = new ObjectMapper().writer();
 
 	@PostMapping("/auth")
-	public ResponseEntity<?> authResponse(@RequestBody String request) throws JsonProcessingException {
+	public synchronized ResponseEntity<?> authResponse(@RequestBody String request) throws JsonProcessingException {
 		if (hashCheck(servletRequest.getHeader("hash"), request)) {
 			JSONObject authRequestJson = new JSONObject(request);
 			if (authResponse.getOperatorId() != authRequestJson.getLong("operatorId")) {
