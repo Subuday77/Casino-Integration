@@ -1,7 +1,9 @@
 package com.ezugi_integration.ezugi.response.rest;
 
+import static com.ezugi_integration.ezugi.beans.Constants.HASHKEY;
+import static com.ezugi_integration.ezugi.beans.Constants.OPERATORID;
+
 import java.text.DecimalFormat;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,9 +21,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.ezugi_integration.ezugi.beans.Storage;
+
 import com.ezugi_integration.ezugi.beans.AuthResponse;
+import com.ezugi_integration.ezugi.beans.Constants.DATA_TYPES;
 import com.ezugi_integration.ezugi.beans.OtherResponse;
+import com.ezugi_integration.ezugi.beans.Storage;
 import com.ezugi_integration.ezugi.beans.User;
 import com.ezugi_integration.ezugi.storage.DAO.StorageDAO;
 import com.ezugi_integration.ezugi.user.DAO.UserDAO;
@@ -29,10 +33,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.gson.Gson;
-
-import static com.ezugi_integration.ezugi.beans.Constants.HASHKEY;
-import static com.ezugi_integration.ezugi.beans.Constants.OPERATORID;
-import static com.ezugi_integration.ezugi.beans.Constants.DATA_TYPES;
 
 @RestController
 @CrossOrigin(origins = "*")
