@@ -110,7 +110,7 @@ public class ResponseController {
 	}
 
 	@PostMapping("/debit")
-	public ResponseEntity<?> debitResponse(@RequestBody String request) {
+	public synchronized ResponseEntity<?> debitResponse(@RequestBody String request) {
 		String expectedHash = servletRequest.getHeader("hash");
 		String call = "debit";
 		response = validations(request, expectedHash, call);
@@ -120,7 +120,7 @@ public class ResponseController {
 	}
 
 	@PostMapping("/rollback")
-	public ResponseEntity<?> rollbackResponse(@RequestBody String request) {
+	public synchronized ResponseEntity<?> rollbackResponse(@RequestBody String request) {
 		String expectedHash = servletRequest.getHeader("hash");
 		String call = "rollback";
 		response = validations(request, expectedHash, call);
@@ -130,7 +130,7 @@ public class ResponseController {
 	}
 
 	@PostMapping("/credit")
-	public ResponseEntity<?> creditResponse(@RequestBody String request) {
+	public synchronized ResponseEntity<?> creditResponse(@RequestBody String request) {
 		String expectedHash = servletRequest.getHeader("hash");
 		String call = "credit";
 		response = validations(request, expectedHash, call);
