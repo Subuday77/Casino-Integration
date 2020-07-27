@@ -1,6 +1,7 @@
 package com.ezugi_integration.ezugi.response.rest;
 
 import java.text.DecimalFormat;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,6 +25,9 @@ import com.ezugi_integration.ezugi.beans.OtherResponse;
 import com.ezugi_integration.ezugi.beans.User;
 import com.ezugi_integration.ezugi.storage.DAO.StorageDAO;
 import com.ezugi_integration.ezugi.user.DAO.UserDAO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+
 import static com.ezugi_integration.ezugi.beans.Constants.HASHKEY;
 import static com.ezugi_integration.ezugi.beans.Constants.OPERATORID;
 import static com.ezugi_integration.ezugi.beans.Constants.DATA_TYPES;
@@ -51,6 +55,8 @@ public class ResponseController {
 	StorageDAO storageDAO;
 	
 	public double balanceToRecord=0;
+	Gson gson = new Gson();
+	
 
 	@PostMapping("/auth")
 	public ResponseEntity<?> authResponse(@RequestBody String request) {
@@ -81,9 +87,14 @@ public class ResponseController {
 				authResponse.setErrorCode(0);
 				authResponse.setErrorDescription("OK");
 				userDAO.addUser(userDAO.findUserById(existingUser.get().getUid()).get());
-				authResponse.setTimestamp(System.currentTimeMillis());
+				JSONObject authResp = new JSONObject(authResponse);
+				authResp.append("VIP".toUpperCase(), authResp.get("vip"));
+				authResp.remove("vip".toLowerCase());
+				authResp.put("timestamp", System.currentTimeMillis());
+//				AuthResponse authResponse = gson.fromJson(authResp, AuthResponse.class);
+//				authResponse.setTimestamp(System.currentTimeMillis());
 
-				return new ResponseEntity<AuthResponse>(authResponse, HttpStatus.OK);
+				return new ResponseEntity<JSONObject>(authResp, HttpStatus.OK);
 			}
 			authResponse = new AuthResponse();
 			authResponse.setErrorCode(6);
