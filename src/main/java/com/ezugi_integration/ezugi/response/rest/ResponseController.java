@@ -30,9 +30,6 @@ import com.ezugi_integration.ezugi.beans.User;
 import com.ezugi_integration.ezugi.storage.DAO.StorageDAO;
 import com.ezugi_integration.ezugi.user.DAO.UserDAO;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.google.gson.Gson;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -57,8 +54,8 @@ public class ResponseController {
 	StorageDAO storageDAO;
 
 	public double balanceToRecord = 0;
-	Gson gson = new Gson();
-	ObjectWriter ow1 = new ObjectMapper().writer();
+	
+	
 
 	@PostMapping("/auth")
 	public synchronized ResponseEntity<?> authResponse(@RequestBody String request) throws JsonProcessingException {
