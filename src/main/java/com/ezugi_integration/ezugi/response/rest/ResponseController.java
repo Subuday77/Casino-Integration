@@ -25,7 +25,9 @@ import com.ezugi_integration.ezugi.beans.OtherResponse;
 import com.ezugi_integration.ezugi.beans.User;
 import com.ezugi_integration.ezugi.storage.DAO.StorageDAO;
 import com.ezugi_integration.ezugi.user.DAO.UserDAO;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.gson.Gson;
 
 import static com.ezugi_integration.ezugi.beans.Constants.HASHKEY;
@@ -53,13 +55,13 @@ public class ResponseController {
 	Storage storage;
 	@Autowired
 	StorageDAO storageDAO;
-	
-	public double balanceToRecord=0;
+
+	public double balanceToRecord = 0;
 	Gson gson = new Gson();
-	
+	ObjectWriter ow1 = new ObjectMapper().writer();
 
 	@PostMapping("/auth")
-	public ResponseEntity<?> authResponse(@RequestBody String request) {
+	public ResponseEntity<?> authResponse(@RequestBody String request) throws JsonProcessingException {
 		if (hashCheck(servletRequest.getHeader("hash"), request)) {
 			JSONObject authRequestJson = new JSONObject(request);
 			if (authResponse.getOperatorId() != authRequestJson.getLong("operatorId")) {
@@ -88,13 +90,11 @@ public class ResponseController {
 				authResponse.setErrorDescription("OK");
 				userDAO.addUser(userDAO.findUserById(existingUser.get().getUid()).get());
 				JSONObject authResp = new JSONObject(authResponse);
-				authResp.append("VIP".toUpperCase(), authResp.get("vip"));
-				authResp.remove("vip".toLowerCase());
 				authResp.put("timestamp", System.currentTimeMillis());
-//				AuthResponse authResponse = gson.fromJson(authResp, AuthResponse.class);
-//				authResponse.setTimestamp(System.currentTimeMillis());
 
-				return new ResponseEntity<JSONObject>(authResp, HttpStatus.OK);
+				String auResp = authResp.toString();
+				System.out.println(auResp);
+				return new ResponseEntity<String>(auResp, HttpStatus.OK);
 			}
 			authResponse = new AuthResponse();
 			authResponse.setErrorCode(6);
@@ -231,7 +231,8 @@ public class ResponseController {
 			}
 			response.setErrorCode(0);
 			response.setErrorDescription("OK");
-			balanceToRecord = Double.parseDouble(formatMyDouble(user.get().getBalance() - requestJson.getDouble("debitAmount")));
+			balanceToRecord = Double
+					.parseDouble(formatMyDouble(user.get().getBalance() - requestJson.getDouble("debitAmount")));
 			response.setBalance(balanceToRecord);
 			userDAO.findUserById(requestJson.getLong("uid")).get().setBalance(balanceToRecord);
 			userDAO.findUserById(requestJson.getLong("uid")).get().setSessionTokenTimestamp(System.currentTimeMillis());
@@ -272,7 +273,8 @@ public class ResponseController {
 					}
 					response.setErrorCode(0);
 					response.setErrorDescription("OK");
-					balanceToRecord = Double.parseDouble(formatMyDouble(user.get().getBalance() + requestJson.getDouble("rollbackAmount")));
+					balanceToRecord = Double.parseDouble(
+							formatMyDouble(user.get().getBalance() + requestJson.getDouble("rollbackAmount")));
 					response.setBalance(balanceToRecord);
 					userDAO.findUserById(requestJson.getLong("uid")).get().setBalance(balanceToRecord);
 					userDAO.findUserById(requestJson.getLong("uid")).get()
@@ -342,7 +344,8 @@ public class ResponseController {
 			}
 			response.setErrorCode(0);
 			response.setErrorDescription("OK");
-			balanceToRecord = Double.parseDouble(formatMyDouble(user.get().getBalance() + requestJson.getDouble("creditAmount")));
+			balanceToRecord = Double
+					.parseDouble(formatMyDouble(user.get().getBalance() + requestJson.getDouble("creditAmount")));
 			response.setBalance(balanceToRecord);
 			userDAO.findUserById(requestJson.getLong("uid")).get().setBalance(balanceToRecord);
 			userDAO.findUserById(requestJson.getLong("uid")).get().setSessionTokenTimestamp(System.currentTimeMillis());
