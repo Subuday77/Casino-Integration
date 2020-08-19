@@ -10,6 +10,8 @@ import javax.persistence.Table;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.ezugi_integration.ezugi.response.rest.ResponseController;
+
 @Entity
 @Table(name = "Users")
 @Component
@@ -156,7 +158,7 @@ public class User {
 	}
 
 	public void setBalance(double balance) {
-		this.balance = balance;
+		this.balance = Double.parseDouble(ResponseController.formatMyDouble(balance));
 	}
 
 	@Column
