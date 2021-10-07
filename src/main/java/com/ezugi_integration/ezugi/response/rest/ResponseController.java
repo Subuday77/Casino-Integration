@@ -82,7 +82,7 @@ public class ResponseController {
 				userDAO.findUserById(existingUser.get().getUid()).get().setInitialTokenTimestamp(0);
 				authResponse.setBalance(existingUser.get().getBalance());
 				authResponse.setCurrency(existingUser.get().getCurrency());
-				authResponse.setVIP(existingUser.get().getVIP());
+				authResponse.setVip(existingUser.get().getVip());
 				authResponse.setErrorCode(0);
 				authResponse.setErrorDescription("OK");
 				userDAO.addUser(userDAO.findUserById(existingUser.get().getUid()).get());

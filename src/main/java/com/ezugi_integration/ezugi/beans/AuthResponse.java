@@ -18,7 +18,7 @@ public class AuthResponse {
 	private String playerTokenAtLaunch;
 	private double balance;
 	private String currency;
-	private String VIP;
+	private String vip;
 	private int errorCode=-99;
 	private String errorDescription;
 	private long timestamp;
@@ -36,7 +36,7 @@ public class AuthResponse {
 		this.playerTokenAtLaunch = playerTokenAtLaunch;
 		this.balance = balance;
 		this.currency = currency;
-		this.VIP = VIP;
+		this.vip = vip;
 		this.errorCode = errorCode;
 		this.errorDescription = errorDescription;
 		this.timestamp = timestamp;
@@ -98,12 +98,12 @@ public class AuthResponse {
 		this.currency = currency;
 	}
 
-	public String getVIP() {
-		return VIP;
+	public String getVip() {
+		return vip;
 	}
 
-	public void setVIP(String VIP) {
-		this.VIP = VIP;
+	public void setVip(String vip) {
+		this.vip = vip;
 	}
 
 	public int getErrorCode() {

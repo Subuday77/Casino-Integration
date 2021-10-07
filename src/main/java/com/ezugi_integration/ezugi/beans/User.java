@@ -31,7 +31,7 @@ public class User {
 	private double balance;
 	private String currency;
 	private String language;
-	private String VIP;
+	private String vip;
 	private double bonusAmount;
 	// private boolean bjAllowed;
 
@@ -55,7 +55,7 @@ public class User {
 		this.balance = balance;
 		this.currency = currency;
 		this.language = language;
-		this.VIP = VIP;
+		this.vip = vip;
 		this.bonusAmount = bonusAmount;
 		// this.bjAllowed = bjAllowed;
 	}
@@ -180,12 +180,12 @@ public class User {
 	}
 
 	@Column
-	public String getVIP() {
-		return VIP;
+	public String getVip() {
+		return vip;
 	}
 
-	public void setVIP(String VIP) {
-		this.VIP = VIP;
+	public void setVip(String vip) {
+		this.vip = vip;
 	}
 
 	@Column
