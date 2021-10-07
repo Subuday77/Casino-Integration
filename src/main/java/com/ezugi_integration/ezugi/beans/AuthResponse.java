@@ -12,7 +12,7 @@ import static com.ezugi_integration.ezugi.beans.Constants.OPERATORID;
 public class AuthResponse {
 	@JsonInclude(Include.ALWAYS)
 	private long operatorId = OPERATORID;
-	private String uid;
+	private int uid;
 	private String nickName;
 	private String token;
 	private String playerTokenAtLaunch;
@@ -27,7 +27,7 @@ public class AuthResponse {
 		// TODO Auto-generated constructor stub
 	}
 
-	public AuthResponse(long operatorId, String uid, String nickName, String token, String playerTokenAtLaunch,
+	public AuthResponse(long operatorId, int uid, String nickName, String token, String playerTokenAtLaunch,
 			double balance, String currency, String VIP, int errorCode, String errorDescription, long timestamp) {
 		this.operatorId = operatorId;
 		this.uid = uid;
@@ -50,11 +50,11 @@ public class AuthResponse {
 		this.operatorId = operatorId;
 	}
 
-	public String getUid() {
+	public int getUid() {
 		return uid;
 	}
 
-	public void setUid(String uid) {
+	public void setUid(int uid) {
 		this.uid = uid;
 	}
 

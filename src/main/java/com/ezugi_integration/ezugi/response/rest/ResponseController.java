@@ -70,7 +70,7 @@ public class ResponseController {
 			Optional<User> existingUser = userDAO.findUserByInitialToken(authRequestJson.getString("token"));
 			if (existingUser.isPresent()) {
 				String token = String.valueOf(UUID.randomUUID());
-				authResponse.setUid(String.valueOf(existingUser.get().getUid()));
+				authResponse.setUid((int) existingUser.get().getUid());
 				authResponse.setNickName(existingUser.get().getUserName());
 				authResponse.setToken(token);
 				userDAO.findUserById(existingUser.get().getUid()).get().setSessionToken(token);
@@ -181,6 +181,7 @@ public class ResponseController {
 			response.setErrorDescription("Invalid operator ID");
 			response.setBalance(0);
 			return response;
+
 		}
 		Optional<User> user = userDAO.findUserBySessionToken(response.getToken());
 		if (user.isEmpty() && (!call.equals("credit"))) {
