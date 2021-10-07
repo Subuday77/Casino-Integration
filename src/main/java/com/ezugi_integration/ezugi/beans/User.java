@@ -31,7 +31,7 @@ public class User {
 	private double balance;
 	private String currency;
 	private String language;
-	private String vip;
+	private int vip;
 	private double bonusAmount;
 	// private boolean bjAllowed;
 
@@ -180,11 +180,11 @@ public class User {
 	}
 
 	@Column
-	public String getVip() {
+	public int getVip() {
 		return vip;
 	}
 
-	public void setVip(String vip) {
+	public void setVip(int vip) {
 		this.vip = vip;
 	}
 

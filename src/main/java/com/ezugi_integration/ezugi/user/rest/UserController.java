@@ -45,7 +45,7 @@ public class UserController {
 			user.setBalance(1000);
 			user.setCurrency("USD");
 			user.setLanguage("en");
-			user.setVip("1");
+			user.setVip(1);
 			user.setBonusAmount(0);
 			userDAO.addUser(user);
 			return new ResponseEntity<String>("User with UID " + user.getUid() + " was added", HttpStatus.OK);
