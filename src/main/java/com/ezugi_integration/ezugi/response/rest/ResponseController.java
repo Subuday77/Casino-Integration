@@ -3,6 +3,8 @@ package com.ezugi_integration.ezugi.response.rest;
 import static com.ezugi_integration.ezugi.beans.Constants.HASHKEY;
 import static com.ezugi_integration.ezugi.beans.Constants.OPERATORID;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Optional;
 import java.util.UUID;
@@ -53,7 +55,7 @@ public class ResponseController {
 	@Autowired
 	StorageDAO storageDAO;
 
-	public double balanceToRecord = 0;
+	public BigDecimal balanceToRecord = BigDecimal.valueOf(0).setScale(2, RoundingMode.HALF_DOWN);
 	
 	
 
@@ -168,25 +170,25 @@ public class ResponseController {
 		response.setCurrency(requestJson.getString("currency"));
 		response.setGameId(requestJson.getInt("gameId"));
 		response.setTableId(requestJson.getInt("tableId"));
-		response.setBonusAmount(0);
+		response.setBonusAmount(BigDecimal.valueOf(0));
 		// Common validations
 		if (!hashCheck(expectedHash, request)) {
 			response.setErrorCode(1);
 			response.setErrorDescription("Invalid hash");
-			response.setBalance(0);
+			response.setBalance(BigDecimal.valueOf(0));
 			return response;
 		}
 		if (response.getOperatorId() != OPERATORID) {
 			response.setErrorCode(1);
 			response.setErrorDescription("Invalid operator ID");
-			response.setBalance(0);
+			response.setBalance(BigDecimal.valueOf(0));
 			return response;
 		}
 		Optional<User> user = userDAO.findUserBySessionToken(response.getToken());
 		if (user.isEmpty() && (!call.equals("credit"))) {
 			response.setErrorCode(6);
 			response.setErrorDescription("Token not found");
-			response.setBalance(0);
+			response.setBalance(BigDecimal.valueOf(0));
 			return response;
 		}
 		user = userDAO.findUserById(Long.parseLong((response.getUid())));
@@ -194,7 +196,7 @@ public class ResponseController {
 
 			response.setErrorCode(7);
 			response.setErrorDescription("User not found");
-			response.setBalance(0);
+			response.setBalance(BigDecimal.valueOf(0));
 			return response;
 		}
 		// Debit validations
@@ -205,7 +207,7 @@ public class ResponseController {
 				response.setBalance(user.get().getBalance());
 				return response;
 			}
-			if (requestJson.getDouble("debitAmount") > user.get().getBalance()) {
+			if (requestJson.getDouble("debitAmount") > user.get().getBalance().doubleValue()) {
 				response.setErrorCode(3);
 				response.setErrorDescription("Insuficient funds");
 				response.setBalance(user.get().getBalance());
@@ -228,8 +230,7 @@ public class ResponseController {
 			}
 			response.setErrorCode(0);
 			response.setErrorDescription("OK");
-			balanceToRecord = Double
-					.parseDouble(formatMyDouble(user.get().getBalance() - requestJson.getDouble("debitAmount")));
+			balanceToRecord = BigDecimal.valueOf(Double.parseDouble(formatMyDouble(user.get().getBalance().doubleValue() - requestJson.getDouble("debitAmount")))).setScale(2,RoundingMode.HALF_DOWN);
 			response.setBalance(balanceToRecord);
 			userDAO.findUserById(requestJson.getLong("uid")).get().setBalance(balanceToRecord);
 			userDAO.findUserById(requestJson.getLong("uid")).get().setSessionTokenTimestamp(System.currentTimeMillis());
@@ -270,8 +271,7 @@ public class ResponseController {
 					}
 					response.setErrorCode(0);
 					response.setErrorDescription("OK");
-					balanceToRecord = Double.parseDouble(
-							formatMyDouble(user.get().getBalance() + requestJson.getDouble("rollbackAmount")));
+					balanceToRecord =BigDecimal.valueOf(Double.parseDouble(formatMyDouble(user.get().getBalance().doubleValue() +  requestJson.getDouble("rollbackAmount")))).setScale(2,RoundingMode.HALF_DOWN);;
 					response.setBalance(balanceToRecord);
 					userDAO.findUserById(requestJson.getLong("uid")).get().setBalance(balanceToRecord);
 					userDAO.findUserById(requestJson.getLong("uid")).get()
@@ -306,7 +306,7 @@ public class ResponseController {
 				if (storage.isEmpty()) {
 					response.setErrorCode(6);
 					response.setErrorDescription("Token not found");
-					response.setBalance(0);
+					response.setBalance(BigDecimal.valueOf(0));
 					return response;
 				}
 			}
@@ -341,8 +341,8 @@ public class ResponseController {
 			}
 			response.setErrorCode(0);
 			response.setErrorDescription("OK");
-			balanceToRecord = Double
-					.parseDouble(formatMyDouble(user.get().getBalance() + requestJson.getDouble("creditAmount")));
+			balanceToRecord = BigDecimal.valueOf
+					(Double.parseDouble(formatMyDouble(user.get().getBalance().doubleValue() + requestJson.getDouble("creditAmount")))).setScale(2,RoundingMode.HALF_DOWN);
 			response.setBalance(balanceToRecord);
 			userDAO.findUserById(requestJson.getLong("uid")).get().setBalance(balanceToRecord);
 			userDAO.findUserById(requestJson.getLong("uid")).get().setSessionTokenTimestamp(System.currentTimeMillis());

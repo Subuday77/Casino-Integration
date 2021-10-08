@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import static com.ezugi_integration.ezugi.beans.Constants.OPERATORID;
 
 @Component
@@ -16,7 +19,7 @@ public class AuthResponse {
 	private String nickName;
 	private String token;
 	private String playerTokenAtLaunch;
-	private double balance;
+	private BigDecimal balance;
 	private String currency;
 	private String VIP;
 	private int errorCode=-99;
@@ -28,7 +31,7 @@ public class AuthResponse {
 	}
 
 	public AuthResponse(long operatorId, String uid, String nickName, String token, String playerTokenAtLaunch,
-			double balance, String currency, String VIP, int errorCode, String errorDescription, long timestamp) {
+			BigDecimal balance, String currency, String VIP, int errorCode, String errorDescription, long timestamp) {
 		this.operatorId = operatorId;
 		this.uid = uid;
 		this.nickName = nickName;
@@ -82,12 +85,12 @@ public class AuthResponse {
 		this.playerTokenAtLaunch = playerTokenAtLaunch;
 	}
 
-	public double getBalance() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
 
-	public void setBalance(double balance) {
-		this.balance = balance;
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance.setScale(2, RoundingMode.HALF_DOWN);
 	}
 
 	public String getCurrency() {

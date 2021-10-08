@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 @Component
 @JsonInclude(Include.NON_DEFAULT)
 public class OtherResponse {
@@ -17,11 +20,11 @@ public class OtherResponse {
 	private String transactionId;
 	private String token;
 	private long roundId;
-	private double balance = -99;
+	private BigDecimal balance = BigDecimal.valueOf(-99).setScale(2,RoundingMode.HALF_DOWN);
 	private String currency;
 	private int gameId;
 	private int tableId;
-	private double bonusAmount = -99;
+	private BigDecimal bonusAmount = BigDecimal.valueOf(-99).setScale(2,RoundingMode.HALF_DOWN);
 	private int errorCode = -99;
 	private String errorDescription;
 	private long timestamp;
@@ -30,8 +33,8 @@ public class OtherResponse {
 		// TODO Auto-generated constructor stub
 	}
 
-	public OtherResponse(long operatorId, String uid, String transactionId, String token, long roundId, double balance,
-			String currency, int gameId, int tableId, double bonusAmount, int errorCode, String errorDescription,
+	public OtherResponse(long operatorId, String uid, String transactionId, String token, long roundId, BigDecimal balance,
+			String currency, int gameId, int tableId, BigDecimal bonusAmount, int errorCode, String errorDescription,
 			long timestamp) {
 		this.operatorId = operatorId;
 		this.uid = uid;
@@ -88,12 +91,11 @@ public class OtherResponse {
 		this.roundId = roundId;
 	}
 
-	public double getBalance() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
 
-	public void setBalance(double balance) {
-		this.balance = balance;
+	public void setBalance(BigDecimal balance) {this.balance = balance.setScale(2,RoundingMode.HALF_DOWN);
 	}
 
 	public String getCurrency() {
@@ -120,12 +122,12 @@ public class OtherResponse {
 		this.tableId = tableId;
 	}
 
-	public double getBonusAmount() {
+	public BigDecimal getBonusAmount() {
 		return bonusAmount;
 	}
 
-	public void setBonusAmount(double bonusAmount) {
-		this.bonusAmount = bonusAmount;
+	public void setBonusAmount(BigDecimal bonusAmount) {
+		this.bonusAmount = bonusAmount.setScale(2,RoundingMode.HALF_DOWN);
 	}
 
 	public int getErrorCode() {

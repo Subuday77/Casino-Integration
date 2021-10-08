@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import com.ezugi_integration.ezugi.response.rest.ResponseController;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 @Entity
 @Table(name = "Users")
 @Component
@@ -28,11 +31,11 @@ public class User {
 	private String sessionToken;
 	private long sessionTokenTimestamp;
 	//private boolean sessionTokenExpired;
-	private double balance;
+	private BigDecimal balance;
 	private String currency;
 	private String language;
 	private String VIP;
-	private double bonusAmount;
+	private BigDecimal bonusAmount;
 	// private boolean bjAllowed;
 
 	public User() {
@@ -41,7 +44,7 @@ public class User {
 
 	public User(String firstName, String lastName, String userName, String password, long uid, String initialToken,
 			long initialTokenTimestamp, String sessionToken, long sessionTokenTimestamp, 
-			double balance, String currency, String language, String VIP, double bonusAmount) {
+			BigDecimal balance, String currency, String language, String VIP, BigDecimal bonusAmount) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.userName = userName;
@@ -153,12 +156,12 @@ public class User {
 //	}
 
 	@Column
-	public double getBalance() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
 
-	public void setBalance(double balance) {
-		this.balance = Double.parseDouble(ResponseController.formatMyDouble(balance));
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance.setScale(2, RoundingMode.HALF_DOWN);
 	}
 
 	@Column
@@ -189,12 +192,12 @@ public class User {
 	}
 
 	@Column
-	public double getBonusAmount() {
+	public BigDecimal getBonusAmount() {
 		return bonusAmount;
 	}
 
-	public void setBonusAmount(double bonusAmount) {
-		this.bonusAmount = bonusAmount;
+	public void setBonusAmount(BigDecimal bonusAmount) {
+		this.bonusAmount = bonusAmount.setScale(2,RoundingMode.HALF_DOWN);
 	}
 
 //	@Column
