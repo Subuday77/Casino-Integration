@@ -1,5 +1,7 @@
 package com.ezugi_integration.ezugi.user.rest;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,11 +44,11 @@ public class UserController {
 		Optional<User> existingUser = userDAO.findUserByUserName(user.getUserName());
 		if (existingUser.isEmpty()) {
 
-			user.setBalance(1000);
+			user.setBalance(BigDecimal.valueOf(1000));
 			user.setCurrency("USD");
 			user.setLanguage("en");
 			user.setVIP("1");
-			user.setBonusAmount(0);
+			user.setBonusAmount(BigDecimal.valueOf(0));
 			userDAO.addUser(user);
 			return new ResponseEntity<String>("User with UID " + user.getUid() + " was added", HttpStatus.OK);
 		}
@@ -120,22 +122,22 @@ public class UserController {
 
 		if (existingUser.isPresent()) {
 
-			double balance = userDAO.findUserById(uid).get().getBalance();
-			userDAO.findUserById(uid).get().setBalance(userDAO.findUserById(uid).get().getBalance() + amount);
+			BigDecimal balance = userDAO.findUserById(uid).get().getBalance();
+			userDAO.findUserById(uid).get().setBalance(BigDecimal.valueOf(userDAO.findUserById(uid).get().getBalance().doubleValue() + amount).setScale(2, RoundingMode.HALF_DOWN));
 			userDAO.addUser(userDAO.findUserById(uid).get());
-			if (userDAO.findUserById(uid).get().getBalance() < 0) {
+			if (userDAO.findUserById(uid).get().getBalance().doubleValue() < 0) {
 				userDAO.findUserById(uid).get().setBalance(balance);
 				userDAO.addUser(userDAO.findUserById(uid).get());
 				return new ResponseEntity<String>("Invalid amount. Balance can't be lower than 0",
 						HttpStatus.NOT_ACCEPTABLE);
 			}
-			if (userDAO.findUserById(uid).get().getBalance() > 1000000) {
+			if (userDAO.findUserById(uid).get().getBalance().doubleValue() > 1000000) {
 				userDAO.findUserById(uid).get().setBalance(balance);
 				userDAO.addUser(userDAO.findUserById(uid).get());
 				return new ResponseEntity<String>("Don't be so greedy.\nBetter come later and get some more.",
 						HttpStatus.NOT_ACCEPTABLE);
 			}
-			return new ResponseEntity<Double>(userDAO.findUserById(uid).get().getBalance(), HttpStatus.OK);
+			return new ResponseEntity<Double>(userDAO.findUserById(uid).get().getBalance().doubleValue(), HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("User " + uid + " was not found.", HttpStatus.NOT_FOUND);
 	}
