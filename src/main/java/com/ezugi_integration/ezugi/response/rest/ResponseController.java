@@ -203,7 +203,7 @@ public class ResponseController {
 			if (requestJson.getDouble("debitAmount") < 0) {
 				response.setErrorCode(1);
 				response.setErrorDescription("Negative amount");
-				response.setBalance(user.get().getBalance());
+				response.setBalance(0);
 				return response;
 			}
 			if (requestJson.getDouble("debitAmount") > user.get().getBalance()) {
