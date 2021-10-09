@@ -209,7 +209,7 @@ public class ResponseController {
 			}
 			if (requestJson.getDouble("debitAmount") > user.get().getBalance().doubleValue()) {
 				response.setErrorCode(3);
-				response.setErrorDescription("Insuficient funds");
+				response.setErrorDescription("Insufficient funds");
 				response.setBalance(user.get().getBalance());
 				return response;
 			}
