@@ -114,6 +114,12 @@ public class ResponseController {
 		String call = "debit";
 		response = validations(request, expectedHash, call);
 		response.setTimestamp(System.currentTimeMillis());
+		try {
+			Thread.sleep(1000*60*3);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return new ResponseEntity<OtherResponse>(response, HttpStatus.OK);
 
 	}
