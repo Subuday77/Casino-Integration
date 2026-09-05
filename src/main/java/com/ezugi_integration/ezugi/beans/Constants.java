@@ -9,19 +9,18 @@ public class Constants {
 		token, debit_transaction_id, rollback_transaction_id, credit_transaction_id
 	}
 
-	public static long operatorId() {
-		String value = System.getenv("CASINO_OPERATOR_ID");
-		if (value == null || value.isBlank()) {
-			throw new IllegalStateException("CASINO_OPERATOR_ID must be configured");
-		}
-		return Long.parseLong(value);
-	}
+	public static final long OPERATORID = requiredLong("CASINO_OPERATOR_ID");
+	public static final String HASHKEY = required("CASINO_HASH_KEY");
 
-	public static String hashKey() {
-		String value = System.getenv("CASINO_HASH_KEY");
+	private static String required(String name) {
+		String value = System.getenv(name);
 		if (value == null || value.isBlank()) {
-			throw new IllegalStateException("CASINO_HASH_KEY must be configured");
+			throw new IllegalStateException(name + " must be configured");
 		}
 		return value;
+	}
+
+	private static long requiredLong(String name) {
+		return Long.parseLong(required(name));
 	}
 }
