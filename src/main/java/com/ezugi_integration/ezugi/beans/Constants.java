@@ -4,12 +4,23 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Constants {
-	
+
 	public enum DATA_TYPES {
 		token, debit_transaction_id, rollback_transaction_id, credit_transaction_id
-	};
-	
-	public static final long OPERATORID = 13000100;
-	public static final String HASHKEY = "e225095c-e113-4b27-bc0a-141d599b2748";
+	}
 
+	public static final long OPERATORID = requiredLong("CASINO_OPERATOR_ID");
+	public static final String HASHKEY = required("CASINO_HASH_KEY");
+
+	private static String required(String name) {
+		String value = System.getenv(name);
+		if (value == null || value.isBlank()) {
+			throw new IllegalStateException(name + " must be configured");
+		}
+		return value;
+	}
+
+	private static long requiredLong(String name) {
+		return Long.parseLong(required(name));
+	}
 }
